@@ -1,8 +1,15 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue'
 
+interface Facility {
+  url: string
+  name: string
+  description: string
+  features: string[]
+}
+
 const props = defineProps<{
-  items: string[]
+  items: Facility[]
 }>()
 
 const activeIndex = ref(0)
@@ -10,7 +17,7 @@ const containerRef = ref<HTMLElement | null>(null)
 const isDragging = ref(false)
 const startY = ref(0)
 const showLightbox = ref(false)
-const lightboxImage = ref('')
+const lightboxItem = ref<Facility | null>(null)
 
 // Handle wrap-around index logic
 const nextItem = () => {
@@ -43,7 +50,10 @@ const handleWheel = (e: WheelEvent) => {
 const handleTouchStart = (e: MouseEvent | TouchEvent) => {
   isDragging.value = true
   if ('touches' in e && e.touches.length > 0) {
-    startY.value = e.touches[0].clientY
+    const touch = e.touches[0]
+    if (touch) {
+      startY.value = touch.clientY
+    }
   } else if ('clientY' in e) {
     startY.value = e.clientY
   }
@@ -54,7 +64,10 @@ const handleTouchMove = (e: MouseEvent | TouchEvent) => {
 
   let currentY = 0
   if ('touches' in e && e.touches.length > 0) {
-    currentY = e.touches[0].clientY
+    const touch = e.touches[0]
+    if (touch) {
+      currentY = touch.clientY
+    }
   } else if ('clientY' in e) {
     currentY = e.clientY
   } else {
@@ -76,8 +89,11 @@ const handleTouchEnd = () => {
 
 const handleItemClick = (index: number) => {
   if (activeIndex.value === index) {
-    lightboxImage.value = props.items[index] || ''
-    showLightbox.value = true
+    const item = props.items[index]
+    if (item) {
+      lightboxItem.value = item
+      showLightbox.value = true
+    }
   } else {
     activeIndex.value = index
   }
@@ -166,7 +182,7 @@ const getItemStyles = (index: number) => {
           'hover:bg-gray-50': activeIndex !== index,
         }"
       >
-        <img :src="item" class="w-full h-full object-cover rounded-xl" alt="Facility Image" />
+        <img :src="item.url" class="w-full h-full object-cover rounded-xl" :alt="item.name" />
 
         <!-- Active Indicator Line -->
         <div
@@ -233,34 +249,55 @@ const getItemStyles = (index: number) => {
       leave-to-class="opacity-0 scale-95"
     >
       <div
-        v-if="showLightbox"
-        class="fixed inset-0 z-[100] flex items-center justify-center bg-black/90 backdrop-blur-sm p-4"
+        v-if="showLightbox && lightboxItem"
+        class="fixed inset-0 z-[100] flex items-center justify-center bg-black/95 backdrop-blur-sm"
         @click="closeLightbox"
       >
-        <div class="relative max-w-5xl max-h-[90vh] w-full h-full flex items-center justify-center">
-          <img
-            :src="lightboxImage"
-            class="max-w-full max-h-full object-contain rounded-lg shadow-2xl"
-          />
-          <button
-            class="absolute top-4 right-4 text-white hover:text-primary-300 transition-colors"
-            @click="closeLightbox"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="32"
-              height="32"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            >
-              <path d="M18 6 6 18" />
-              <path d="m6 6 12 12" />
-            </svg>
-          </button>
+        <div
+          class="relative w-full h-full bg-surface overflow-hidden shadow-2xl flex flex-col md:flex-row"
+          @click.stop
+        >
+          <!-- Left Side: Info -->
+          <div class="w-full md:w-1/2 p-8 md:p-12 flex flex-col justify-center overflow-y-auto">
+            <div class="max-w-xl mx-auto w-full">
+              <h2
+                class="text-3xl md:text-4xl font-bold text-primary-100 dark:text-primary-900 mb-6"
+              >
+                {{ lightboxItem.name }}
+              </h2>
+              <p class="text-lg text-text-secondary mb-8 leading-relaxed">
+                {{ lightboxItem.description }}
+              </p>
+
+              <ul class="space-y-4 mb-12">
+                <li
+                  v-for="(feature, idx) in lightboxItem.features"
+                  :key="idx"
+                  class="flex items-center text-text-primary"
+                >
+                  <span class="w-2 h-2 bg-primary-500 rounded-full mr-3"></span>
+                  {{ feature }}
+                </li>
+              </ul>
+
+              <button
+                class="w-full md:w-auto px-8 py-3 bg-primary-600 text-white font-bold rounded-lg hover:bg-primary-700 transition-colors"
+                @click="closeLightbox"
+              >
+                Back
+              </button>
+            </div>
+          </div>
+
+          <!-- Right Side: Image -->
+          <div class="w-full md:w-1/2 h-64 md:h-full bg-black relative">
+            <img
+              :src="lightboxItem.url"
+              class="w-full h-full object-cover opacity-90"
+              :alt="lightboxItem.name"
+            />
+            <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
+          </div>
         </div>
       </div>
     </Transition>

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { ref } from 'vue'
 import { Swiper, SwiperSlide } from 'swiper/vue'
 import { EffectFade, EffectCoverflow, Autoplay, Pagination } from 'swiper/modules'
 import 'swiper/css'
@@ -19,12 +20,75 @@ const heroImages = [
   'https://csjdm.gov.ph/wp-content/uploads/2024/07/450123936_806341595016724_5298769941724312966_n.jpg',
 ]
 
+const facilitiesImages = [
+  {
+    url: 'https://csjdm.gov.ph/wp-content/uploads/2024/07/450364515_806342581683292_1069390803256614959_n.jpg',
+    name: 'Convention Center',
+    description:
+      'A state-of-the-art venue perfect for large gatherings, conferences, and exhibitions. Equipped with modern audio-visual technology and spacious halls to accommodate your grandest events.',
+    features: [
+      'Capacity: 1000+ Guests',
+      'Full Air-conditioning',
+      'Audio-Visual System',
+      'Ample Parking',
+    ],
+  },
+  {
+    url: 'https://csjdm.gov.ph/wp-content/uploads/2024/07/450649206_806341645016719_6292883120028933397_n.jpg',
+    name: 'City Sports Complex',
+    description:
+      'A premier sports facility designed for athletes and enthusiasts. Features an Olympic-sized swimming pool, track and field oval, and indoor courts for various sports activities.',
+    features: ['Olympic-size Pool', 'Rubberized Track', 'Indoor Courts', 'Shower & Locker Rooms'],
+  },
+  {
+    url: 'https://csjdm.gov.ph/wp-content/uploads/2024/07/450372896_806341608350056_9028218512649710235_n.jpg',
+    name: 'Community Hall',
+    description:
+      'A versatile space ideal for community meetings, workshops, and intimate celebrations. Provides a comfortable and accessible environment for local gatherings.',
+    features: ['Capacity: 200 Guests', 'Sound System', 'Projector & Screen', 'Kitchenette'],
+  },
+  {
+    url: 'https://csjdm.gov.ph/wp-content/uploads/2024/07/450664061_806341551683395_2708284143438648466_n.jpg',
+    name: 'Public Park & Plaza',
+    description:
+      'An open-air recreational area featuring landscaped gardens, walking paths, and seating areas. A perfect spot for outdoor activities, relaxation, and public events.',
+    features: ['Landscaped Gardens', 'Walking/Jogging Paths', 'Outdoor Stage', 'Public Restrooms'],
+  },
+  {
+    url: 'https://csjdm.gov.ph/wp-content/uploads/2024/07/450373210_806341601683390_4628059348450583766_n.jpg',
+    name: 'Executive Function Room',
+    description:
+      'An elegant and private room suitable for board meetings, VIP receptions, and exclusive dining. Offers a sophisticated ambiance with premium amenities.',
+    features: ['Capacity: 50 Guests', 'Conference Table', 'Private Restroom', 'High-speed Wi-Fi'],
+  },
+]
+
 const galleryImages = [
-  'https://csjdm.gov.ph/wp-content/uploads/2024/07/450364515_806342581683292_1069390803256614959_n.jpg',
-  'https://csjdm.gov.ph/wp-content/uploads/2024/07/450649206_806341645016719_6292883120028933397_n.jpg',
-  'https://csjdm.gov.ph/wp-content/uploads/2024/07/450372896_806341608350056_9028218512649710235_n.jpg',
-  'https://csjdm.gov.ph/wp-content/uploads/2024/07/450664061_806341551683395_2708284143438648466_n.jpg',
-  'https://csjdm.gov.ph/wp-content/uploads/2024/07/450373210_806341601683390_4628059348450583766_n.jpg',
+  {
+    url: 'https://csjdm.gov.ph/wp-content/uploads/2024/07/450364515_806342581683292_1069390803256614959_n.jpg',
+    name: 'Convention Center',
+    description: 'A grand venue for large-scale events and conferences.',
+  },
+  {
+    url: 'https://csjdm.gov.ph/wp-content/uploads/2024/07/450649206_806341645016719_6292883120028933397_n.jpg',
+    name: 'City Sports Complex',
+    description: 'World-class sports facilities for athletes and the community.',
+  },
+  {
+    url: 'https://csjdm.gov.ph/wp-content/uploads/2024/07/450372896_806341608350056_9028218512649710235_n.jpg',
+    name: 'Community Hall',
+    description: 'A gathering place for local events and celebrations.',
+  },
+  {
+    url: 'https://csjdm.gov.ph/wp-content/uploads/2024/07/450664061_806341551683395_2708284143438648466_n.jpg',
+    name: 'Public Park & Plaza',
+    description: 'Beautiful open spaces for relaxation and recreation.',
+  },
+  {
+    url: 'https://csjdm.gov.ph/wp-content/uploads/2024/07/450373210_806341601683390_4628059348450583766_n.jpg',
+    name: 'Executive Function Room',
+    description: 'Premium meeting spaces for business and executive needs.',
+  },
 ]
 
 const handleScroll = (e: Event) => {
@@ -34,6 +98,19 @@ const handleScroll = (e: Event) => {
   } else {
     uiStore.setScrolled(false)
   }
+}
+
+const lightboxOpen = ref(false)
+const currentLightboxImage = ref<{ url: string; name: string; description: string } | null>(null)
+
+const openLightbox = (img: { url: string; name: string; description: string }) => {
+  currentLightboxImage.value = img
+  lightboxOpen.value = true
+}
+
+const closeLightbox = () => {
+  lightboxOpen.value = false
+  currentLightboxImage.value = ''
 }
 </script>
 
@@ -52,7 +129,7 @@ const handleScroll = (e: Event) => {
         effect="fade"
         :autoplay="{ delay: 5000, disableOnInteraction: false }"
         :loop="true"
-        class="h-full w-full absolute top-0 left-0 z-0"
+        class="hero-swiper h-full w-full absolute top-0 left-0 z-0"
       >
         <swiper-slide v-for="(img, index) in heroImages" :key="index" class="h-full w-full">
           <div class="h-full w-full bg-cover bg-center" :style="{ backgroundImage: `url(${img})` }">
@@ -161,63 +238,124 @@ const handleScroll = (e: Event) => {
                 Secure & Safe Locations
               </li>
             </ul>
-            <button
-              class="px-8 py-3 border-2 border-primary-500 text-primary-600 font-bold rounded-full hover:bg-primary-50 transition-colors cursor-pointer"
-            >
-              View All Facilities
-            </button>
           </div>
         </div>
 
         <!-- Right: Vertical Revolver Swiper -->
         <div class="h-full w-full relative order-1 md:order-2 flex items-center justify-center">
-          <VerticalCarousel :items="galleryImages" />
+          <VerticalCarousel :items="facilitiesImages" />
         </div>
       </div>
     </section>
 
-    <!-- Section 3: Gallery Swiper Carousel -->
+    <!-- Section 3: Gallery of Tourist Spots -->
     <section
-      class="h-screen w-full snap-start bg-background flex flex-col items-center justify-center py-12 relative"
+      class="h-screen w-full snap-start relative flex flex-col justify-center items-center overflow-hidden"
     >
-      <div class="text-center mb-12">
-        <h2 class="text-4xl font-bold text-primary-900">Gallery</h2>
-        <p class="text-text-secondary mt-2">A glimpse into our beautiful spaces</p>
+      <div class="container mx-auto px-4 h-full flex flex-col justify-center">
+        <div class="text-center mb-12">
+          <h2 class="text-4xl md:text-6xl font-bold text-primary-100 dark:text-primary-900 mb-4">
+            Discovering Locations of SJDM
+          </h2>
+          <div class="h-1.5 w-24 bg-primary-500 rounded-full mx-auto"></div>
+        </div>
+
+        <swiper
+          :modules="modules"
+          :slides-per-view="1"
+          :space-between="30"
+          :loop="true"
+          :autoplay="{
+            delay: 3000,
+            disableOnInteraction: false,
+          }"
+          :breakpoints="{
+            '640': {
+              slidesPerView: 2,
+              spaceBetween: 20,
+            },
+            '1024': {
+              slidesPerView: 3,
+              spaceBetween: 30,
+            },
+          }"
+          :pagination="{ clickable: true }"
+          class="gallery-swiper w-full h-[60vh] rounded-2xl overflow-hidden"
+        >
+          <swiper-slide
+            v-for="(img, index) in galleryImages"
+            :key="index"
+            class="relative group cursor-pointer overflow-hidden rounded-2xl"
+            @click="openLightbox(img)"
+          >
+            <img
+              :src="img.url"
+              :alt="img.name"
+              class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+            />
+            <div
+              class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent flex items-end p-6"
+            >
+              <h3 class="text-white text-xl md:text-2xl font-bold">{{ img.name }}</h3>
+            </div>
+          </swiper-slide>
+        </swiper>
       </div>
 
-      <swiper
-        :modules="modules"
-        effect="coverflow"
-        :grabCursor="true"
-        :centeredSlides="true"
-        :slidesPerView="'auto'"
-        :coverflowEffect="{
-          rotate: 0,
-          stretch: 0,
-          depth: 150,
-          modifier: 2.5,
-          slideShadows: true,
-        }"
-        :pagination="{ clickable: true }"
-        :loop="true"
-        class="w-full max-w-6xl h-[500px] px-4"
+      <!-- Lightbox Modal -->
+      <div
+        v-if="lightboxOpen && currentLightboxImage"
+        class="fixed inset-0 z-50 bg-black/95 flex items-center justify-center"
+        @click="closeLightbox"
       >
-        <swiper-slide
-          v-for="(img, index) in galleryImages"
-          :key="index"
-          class="w-[300px] h-[400px] md:w-[400px] md:h-[500px] rounded-2xl overflow-hidden"
+        <div
+          class="relative w-full h-full bg-surface overflow-hidden shadow-2xl flex flex-col"
+          @click.stop
         >
-          <img :src="img" class="w-full h-full object-cover block" />
-        </swiper-slide>
-      </swiper>
+          <!-- Top 80%: Image -->
+          <div class="h-[80%] w-full bg-black relative flex items-center justify-center">
+            <img
+              :src="currentLightboxImage.url"
+              :alt="currentLightboxImage.name"
+              class="max-w-full max-h-full object-contain"
+            />
+          </div>
+
+          <!-- Bottom 20%: Info -->
+          <div
+            class="h-[20%] w-full p-6 flex flex-col justify-center items-center text-center bg-surface"
+          >
+            <h3 class="text-2xl font-bold text-primary-900 dark:text-primary-100 mb-2">
+              {{ currentLightboxImage.name }}
+            </h3>
+            <p class="text-text-secondary mb-4 line-clamp-2">
+              {{ currentLightboxImage.description }}
+            </p>
+            <button
+              class="px-6 py-2 bg-primary-600 text-white font-bold rounded-lg hover:bg-primary-700 transition-colors"
+              @click="closeLightbox"
+            >
+              Back
+            </button>
+          </div>
+        </div>
+      </div>
     </section>
   </div>
 </template>
 
 <style scoped>
-.swiper-slide {
-  background-position: center;
-  background-size: cover;
+.hero-swiper .swiper-slide {
+  height: 100%;
+  width: 100%;
+}
+
+.gallery-swiper .swiper-slide {
+  transition: transform 0.3s ease;
+}
+
+.gallery-swiper .swiper-slide:hover {
+  z-index: 10;
 }
 
 /* Custom animation for blobs */

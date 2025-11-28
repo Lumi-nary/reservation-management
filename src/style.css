@@ -71,17 +71,17 @@
   }
 }
 
-.swiper-slide {
+.hero-swiper .swiper-slide {
   position: relative;
 }
 
-.swiper-slide img {
+.hero-swiper .swiper-slide img {
   filter: blur(2px) brightness(1.15);
   transition: filter 0.3s ease-in-out;
   z-index: 0;
 }
 
-.swiper-slide::after {
+.hero-swiper .swiper-slide::after {
   content: '';
   position: absolute;
   top: 0;
@@ -96,10 +96,10 @@
 }
 
 /* --- Dark Mode --- */
-.dark .swiper-slide img {
+.dark .hero-swiper .swiper-slide img {
   filter: blur(4px) brightness(0.5);
 }
 
-.dark .swiper-slide::after {
+.dark .hero-swiper .swiper-slide::after {
   background-color: rgba(0, 0, 0, 0.3);
 }

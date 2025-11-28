@@ -26,6 +26,16 @@ const router = createRouter({
       component: RegisterView,
     },
     {
+      path: '/forgot-password',
+      name: 'forgot-password',
+      component: () => import('@/views/auth/ForgotPasswordView.vue'),
+    },
+    {
+      path: '/reset-password',
+      name: 'reset-password',
+      component: () => import('@/views/auth/ResetPasswordView.vue'),
+    },
+    {
       path: '/',
       component: DashboardLayout,
       meta: { requiresAuth: true },
@@ -34,6 +44,16 @@ const router = createRouter({
           path: 'home',
           name: 'home',
           component: ClientHome,
+        },
+        {
+          path: 'my-reservations',
+          name: 'my-reservations',
+          component: () => import('@/views/client/MyReservationsView.vue'),
+        },
+        {
+          path: 'profile',
+          name: 'profile',
+          component: () => import('@/views/client/ProfileView.vue'),
         },
         {
           path: 'admin',

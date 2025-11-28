@@ -72,54 +72,72 @@ const getFacilityName = (id: string) =>
 <template>
   <div class="space-y-8">
     <!-- Hero / Announcement Section -->
-    <div
-      class="bg-gray-900 text-white p-8 rounded-lg shadow-lg h-64 flex flex-col justify-center relative overflow-hidden"
-    >
-      <div class="relative z-10">
-        <h2 class="text-3xl font-bold mb-2">New Facility / Announcement</h2>
-        <p class="text-gray-300 max-w-xl">
-          Check out our newly renovated Convention Center! Now available for booking with increased
-          capacity and modern amenities.
-        </p>
-      </div>
-      <!-- Decorative circle from wireframe -->
-      <div class="absolute -right-10 -top-10 w-64 h-64 bg-gray-800 rounded-full opacity-50"></div>
-    </div>
+    <div class="relative rounded-2xl overflow-hidden shadow-xl h-80 group">
+      <!-- Background Image -->
+      <img
+        src="https://csjdm.gov.ph/wp-content/uploads/2024/07/450364515_806342581683292_1069390803256614959_n.jpg"
+        alt="Conference Hall"
+        class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+      />
+      <!-- Dark Overlay -->
+      <div class="absolute inset-0 bg-black/60 backdrop-blur-[1px]"></div>
 
-    <!-- CTA Section -->
-    <div class="bg-black text-white p-6 rounded-lg shadow-md flex items-center justify-between">
-      <h3 class="text-xl font-semibold">Ready to book?</h3>
-      <button
-        @click="startBooking"
-        class="bg-white text-black px-6 py-2 rounded font-bold hover:bg-gray-200 transition"
-      >
-        Make a new Reservation
-      </button>
+      <!-- Content -->
+      <div class="relative z-10 h-full flex flex-col justify-center px-8 md:px-12">
+        <h2 class="text-4xl md:text-5xl font-bold text-white mb-4 leading-tight">
+          New State-of-the-Art<br />Conference Hall Now Open!
+        </h2>
+        <p class="text-gray-200 text-lg max-w-2xl mb-8">
+          Explore our new high-tech facility for your next event. Equipped with the latest
+          audio-visual technology and premium amenities.
+        </p>
+        <button
+          @click="startBooking"
+          class="bg-primary-600 text-white px-8 py-3 rounded-lg font-bold hover:bg-primary-700 transition-all shadow-lg hover:shadow-primary-600/30 transform hover:-translate-y-1 w-fit"
+        >
+          Make a New Reservation
+        </button>
+      </div>
     </div>
 
     <!-- Upcoming Reservations -->
     <div>
-      <h3 class="text-2xl font-bold mb-4 text-gray-800">Upcoming Reservations</h3>
-      <div v-if="upcomingReservations.length === 0" class="text-gray-500 italic">
+      <div class="flex items-center justify-between mb-6">
+        <h3 class="text-2xl font-bold text-text-primary">Upcoming Reservations</h3>
+        <button
+          @click="startBooking"
+          class="text-primary-600 font-semibold hover:underline text-sm"
+        >
+          + Book Facility
+        </button>
+      </div>
+
+      <div
+        v-if="upcomingReservations.length === 0"
+        class="text-text-muted italic bg-surface p-8 rounded-xl text-center border border-dashed border-border"
+      >
         No upcoming reservations.
       </div>
-      <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         <div
           v-for="res in upcomingReservations"
           :key="res.id"
-          class="bg-gray-200 p-4 rounded-lg border-l-4 border-gray-800"
+          class="bg-surface p-6 rounded-xl shadow-sm hover:shadow-md transition-shadow border border-border"
         >
-          <div class="flex justify-between items-start mb-2">
-            <span class="text-xs font-bold uppercase tracking-wider text-gray-600">{{
-              res.status
-            }}</span>
+          <div class="flex justify-between items-start mb-4">
+            <span
+              class="text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded bg-yellow-100 text-yellow-800"
+            >
+              PENDING APPROVAL
+            </span>
+            <span class="text-xs text-text-muted">{{ res.dates[0] }}</span>
           </div>
-          <h4 class="text-lg font-bold text-gray-900">{{ getFacilityName(res.facilityId) }}</h4>
-          <div class="mt-2 text-sm text-gray-700">
-            <p><span class="font-semibold">Date:</span> {{ res.dates.join(', ') }}</p>
-            <p v-if="res.totalFee > 0">
-              <span class="font-semibold">Fee:</span> ${{ res.totalFee }}
-            </p>
+          <h4 class="text-lg font-bold text-text-primary mb-2">
+            {{ getFacilityName(res.facilityId) }}
+          </h4>
+          <div class="space-y-1 text-sm text-text-secondary">
+            <p><span class="font-medium">Time:</span> 9:00 AM - 5:00 PM</p>
+            <p><span class="font-medium">Details:</span> {{ res.reason || 'N/A' }}</p>
           </div>
         </div>
       </div>
@@ -127,24 +145,33 @@ const getFacilityName = (id: string) =>
 
     <!-- Past Reservations -->
     <div>
-      <h3 class="text-2xl font-bold mb-4 text-gray-800">Past Reservations</h3>
-      <div v-if="pastReservations.length === 0" class="text-gray-500 italic">
+      <h3 class="text-2xl font-bold text-text-primary mb-6">Past Reservations</h3>
+      <div
+        v-if="pastReservations.length === 0"
+        class="text-text-muted italic bg-surface p-8 rounded-xl text-center border border-dashed border-border"
+      >
         No past reservations.
       </div>
-      <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         <div
           v-for="res in pastReservations"
           :key="res.id"
-          class="bg-gray-200 p-4 rounded-lg opacity-75"
+          class="bg-surface p-6 rounded-xl shadow-sm opacity-75 hover:opacity-100 transition-opacity border border-border"
         >
-          <div class="flex justify-between items-start mb-2">
-            <span class="text-xs font-bold uppercase tracking-wider text-gray-600">{{
-              res.status
-            }}</span>
+          <div class="flex justify-between items-start mb-4">
+            <span
+              class="text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded bg-green-100 text-green-800"
+            >
+              COMPLETED
+            </span>
+            <span class="text-xs text-text-muted">{{ res.dates[0] }}</span>
           </div>
-          <h4 class="text-lg font-bold text-gray-900">{{ getFacilityName(res.facilityId) }}</h4>
-          <div class="mt-2 text-sm text-gray-700">
-            <p><span class="font-semibold">Date:</span> {{ res.dates.join(', ') }}</p>
+          <h4 class="text-lg font-bold text-text-primary mb-2">
+            {{ getFacilityName(res.facilityId) }}
+          </h4>
+          <div class="space-y-1 text-sm text-text-secondary">
+            <p><span class="font-medium">Time:</span> 9:00 AM - 5:00 PM</p>
+            <p><span class="font-medium">Details:</span> {{ res.reason || 'N/A' }}</p>
           </div>
         </div>
       </div>

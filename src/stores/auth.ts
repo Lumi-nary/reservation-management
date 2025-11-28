@@ -17,12 +17,11 @@ export interface User {
   role: UserRole
   status: UserStatus
   organization?: string // For Internal Clients
+  phone?: string
   documents?: string[] // Mocked document names
 }
 
 export const useAuthStore = defineStore('auth', () => {
-  const router = useRouter()
-
   // Mock Database
   const users = ref<User[]>([
     {
@@ -31,6 +30,7 @@ export const useAuthStore = defineStore('auth', () => {
       email: 'admin@sys.com',
       role: 'SystemAdmin',
       status: 'Active',
+      phone: '09123456789',
     },
     {
       id: 'head-1',
@@ -52,6 +52,14 @@ export const useAuthStore = defineStore('auth', () => {
       email: 'conv@mgr.com',
       role: 'FacilityManager',
       status: 'Active',
+    },
+    {
+      id: 'client-1',
+      name: 'Client User',
+      email: 'client@ext.com',
+      role: 'ExternalClient',
+      status: 'Active',
+      phone: '09987654321',
     },
   ])
 
